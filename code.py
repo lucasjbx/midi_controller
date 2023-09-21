@@ -24,6 +24,10 @@ import usb_hid
 from adafruit_hid.consumer_control import ConsumerControl
 from adafruit_hid.consumer_control_code import ConsumerControlCode
 import rotaryio
+import pwmio
+from adafruit_motor import servo
+from adafruit_simplemath import map_range
+
 
 ws_pin = board.GP22
 led_num = 16
@@ -149,6 +153,13 @@ lastPosition = 0
 consumer = ConsumerControl(usb_hid.devices)
 ##############################################################################
 
+#############################Servo###########################################
+
+pwm = pwmio.PWMOut(board.GP17, frequency=50)
+servo_1 = servo.Servo(pwm, min_pulse = 700, max_pulse = 2600)
+
+############################################################################
+
 while True:
 #############################rotary encoder-volume############################
     # poll encoder position
@@ -174,7 +185,13 @@ while True:
                 ring.fill((0, 0, 0))
             else:
                 ring[0:leds_to_light] = BLUE * leds_to_light
-                ring[leds_to_light:led_num] = BLACK * (led_num-leds_to_light)
+                ring[leds_to_light:led_num] = BLACK * (led_num-leds_to_light)         
+##servo
+                servo_val = int(map_range(msg.value, 5, 127, 0, 180))
+                servo_1.angle = servo_val
+                print(msg.value, servo_val)
+                
+    
 ##button            
     cur_state = btn.value
     if cur_state != prev_state:
