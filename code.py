@@ -35,6 +35,9 @@ BRIGHTNESS = 0.1  # Adjust the brightness (0.0 - 1.0)
 
 ring = neopixel.NeoPixel(ws_pin, led_num, brightness = 0.1, auto_write=True)
 
+# time keeper, so we know when to turn off the LED
+timestamp = time.monotonic()
+LIT_TIMEOUT = 3                  # after n seconds, turn off ring
 
 
 USB_MIDI_channel = 1  # pick your USB MIDI out channel here, 1-16
@@ -180,18 +183,23 @@ while True:
         if str(msg)[0] != "M":
             print(msg)
 ##light
-            leds_to_light = round(msg.value/(127/led_num))
+            leds_to_light = round(msg.value/(126/led_num))
             if leds_to_light == 0:
                 ring.fill((0, 0, 0))
             else:
                 ring[0:leds_to_light] = BLUE * leds_to_light
-                ring[leds_to_light:led_num] = BLACK * (led_num-leds_to_light)         
+                ring[leds_to_light:led_num] = BLACK * (led_num-leds_to_light)
+                timestamp = time.monotonic()        # something happened!
 ##servo
-                servo_val = int(map_range(msg.value, 5, 127, 0, 180))
+                servo_val = int(map_range(msg.value, 5, 126, 0, 180))
                 servo_1.angle = servo_val
                 print(msg.value, servo_val)
-                
-    
+
+# turn off ring light and servo temporarily 
+    if time.monotonic() > timestamp + LIT_TIMEOUT:
+        ring.fill((0, 0, 0))   # turn off ring light temporarily
+        
+        
 ##button            
     cur_state = btn.value
     if cur_state != prev_state:

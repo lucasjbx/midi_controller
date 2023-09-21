@@ -1,0 +1,12 @@
+encoder, lights
+https://learn.adafruit.com/media-dial/code
+
+map range
+https://www.youtube.com/watch?v=KVLgzVDNV4I
+
+servo
+https://youtu.be/sxVWQ7rLPHg?si=bnegDGtaJVbGzACR
+
+pot
+https://www.youtube.com/watch?v=JoyE8cvMw7c
+
