@@ -10,3 +10,5 @@ https://youtu.be/sxVWQ7rLPHg?si=bnegDGtaJVbGzACR
 pot
 https://www.youtube.com/watch?v=JoyE8cvMw7c
 
+button
+https://learn.adafruit.com/multi-tasking-with-circuitpython/buttons
