@@ -32,8 +32,12 @@ from adafruit_simplemath import map_range
 ws_pin = board.GP22
 led_num = 16
 BRIGHTNESS = 0.1  # Adjust the brightness (0.0 - 1.0)
+color = False
 
 ring = neopixel.NeoPixel(ws_pin, led_num, brightness = 0.1, auto_write=True)
+
+#invierte los leds
+#ring.reversed()
 
 # time keeper, so we know when to turn off the LED
 timestamp = time.monotonic()
@@ -67,6 +71,12 @@ btn.pull = Pull.UP
 
 prev_state = btn.value
 
+#button encoder
+btn_enc = DigitalInOut(board.GP15)
+btn_enc.direction = Direction.INPUT
+btn_enc.pull = Pull.UP
+
+prev_state_btn_enc = btn_enc.value
 
 # Create the input objects list for potentiometers
 knob = []
@@ -143,7 +153,12 @@ def sign(x):  # determine the sign of x
 flag = 1
 BLUE = (0, 0, 255)
 BLACK = (0, 0, 0)
-
+RED: (255, 0, 0)
+GREEN: (0, 255, 0)
+CYAN: (0, 255, 255)
+PURPLE: (255, 0, 255)
+YELLOW: (255, 255, 0)
+WHITE: (255, 255, 255)
 ##############################rotary encoder##################################
 # Rotary encoder inputs with pullup on D3 & D4
 # Rotary encoder
@@ -175,29 +190,50 @@ while True:
             consumer.send(ConsumerControlCode.VOLUME_DECREMENT)
         lastPosition = position
         led.value = False
-
+    # encoder button
+    cur_state_btn_enc = btn_enc.value
+    if cur_state_btn_enc != prev_state_btn_enc:
+        if not cur_state_btn_enc:
+            consumer.send(ConsumerControlCode.MUTE)
+            print("BTN is down")
+        else:
+            print("BTN is up")
+    prev_state_btn_enc = cur_state_btn_enc
 
 ##############################################################################
     msg = usb_midi.receive()
     if msg != None:
-        if str(msg)[0] != "M":
+        print(msg)
+        if str(msg)[0] == "C":
             print(msg)
 ##light
-            leds_to_light = round(msg.value/(126/led_num))
-            if leds_to_light == 0:
-                ring.fill((0, 0, 0))
-            else:
-                ring[0:leds_to_light] = BLUE * leds_to_light
-                ring[leds_to_light:led_num] = BLACK * (led_num-leds_to_light)
-                timestamp = time.monotonic()        # something happened!
-##servo
-                servo_val = int(map_range(msg.value, 5, 126, 0, 180))
-                servo_1.angle = servo_val
-                print(msg.value, servo_val)
+            if msg.control == 1:
+                leds_to_light = round(msg.value/(126/led_num))
+                if leds_to_light == 0:
+                    ring.fill((0, 0, 0))
+                else:
+                    ring[0:leds_to_light] = BLUE * leds_to_light
+                    ring[leds_to_light:led_num] = BLACK * (led_num-leds_to_light)
+                    color = ""
+                    timestamp = time.monotonic()        # something happened!
+    ##servo
+                    servo_val = int(map_range(msg.value, 5, 126, 0, 180))
+                    servo_1.angle = servo_val
+                    print(msg.value, servo_val)
+##led2                    
+        if str(msg)[0] == "N":
+            if msg.velocity == 127:
+                if color != "red":
+                    color = "red"
+                    ring.fill((255, 0, 0))
+                else:
+                    color = ""
+                    ring.fill((0, 0, 0))
 
 # turn off ring light and servo temporarily 
     if time.monotonic() > timestamp + LIT_TIMEOUT:
-        ring.fill((0, 0, 0))   # turn off ring light temporarily
+        if color != "red":
+            ring.fill((0, 0, 0))   # turn off ring light temporarily
         
         
 ##button            
