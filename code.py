@@ -25,7 +25,7 @@ from adafruit_hid.consumer_control import ConsumerControl
 from adafruit_hid.consumer_control_code import ConsumerControlCode
 import rotaryio
 import pwmio
-from adafruit_motor import servo
+#from adafruit_motor import servo
 from adafruit_simplemath import map_range
 
 
@@ -36,8 +36,6 @@ color = False
 
 ring = neopixel.NeoPixel(ws_pin, led_num, brightness = 0.1, auto_write=True)
 
-#invierte los leds
-#ring.reversed()
 
 # time keeper, so we know when to turn off the LED
 timestamp = time.monotonic()
@@ -153,12 +151,12 @@ def sign(x):  # determine the sign of x
 flag = 1
 BLUE = (0, 0, 255)
 BLACK = (0, 0, 0)
-RED: (255, 0, 0)
-GREEN: (0, 255, 0)
-CYAN: (0, 255, 255)
-PURPLE: (255, 0, 255)
-YELLOW: (255, 255, 0)
-WHITE: (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+CYAN = (0, 255, 255)
+PURPLE = (255, 0, 255)
+YELLOW = (255, 255, 0)
+WHITE = (255, 255, 255)
 ##############################rotary encoder##################################
 # Rotary encoder inputs with pullup on D3 & D4
 # Rotary encoder
@@ -171,13 +169,10 @@ lastPosition = 0
 consumer = ConsumerControl(usb_hid.devices)
 ##############################################################################
 
-#############################Servo###########################################
 
-pwm = pwmio.PWMOut(board.GP17, frequency=50)
-servo_1 = servo.Servo(pwm, min_pulse = 700, max_pulse = 2600)
 
 ############################################################################
-
+print(ring)
 while True:
 #############################rotary encoder-volume############################
     # poll encoder position
@@ -208,18 +203,17 @@ while True:
             print(msg)
 ##light
             if msg.control == 1:
-                leds_to_light = round(msg.value/(126/led_num))
-                if leds_to_light == 0:
-                    ring.fill((0, 0, 0))
-                else:
-                    ring[0:leds_to_light] = BLUE * leds_to_light
-                    ring[leds_to_light:led_num] = BLACK * (led_num-leds_to_light)
-                    color = ""
-                    timestamp = time.monotonic()        # something happened!
-    ##servo
-                    servo_val = int(map_range(msg.value, 5, 126, 0, 180))
-                    servo_1.angle = servo_val
-                    print(msg.value, servo_val)
+                #leds_to_light = int(msg.value/(126/led_num))
+                leds_to_light = int(map_range(msg.value, 0, 126, 16, 0))
+                for i in range(0, led_num):
+                    if i >= leds_to_light:
+                        ring[i] = BLUE
+                    else:
+                        ring[i] = (0, 0, 0)
+                color = ""
+                timestamp = time.monotonic()        # something happened!
+                print(msg.value, leds_to_light)
+
 ##led2                    
         if str(msg)[0] == "N":
             if msg.velocity == 127:
