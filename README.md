@@ -111,23 +111,15 @@ GPIO22 acts as a safety button during boot:
 
 ## Linux App (MIDIVol)
 
-**Quick install:**
-```bash
-sudo apt install libasound2-dev python3-pyqt6
-git clone https://github.com/lucasjbx/midi_controller.git
-cd midi_controller/linux_app
-./install.sh
-```
+One-liner install:
 
-**Or with pipx:**
 ```bash
-sudo apt install libasound2-dev python3-pyqt6 pipx
-pipx install --system-site-packages "midivol @ git+https://github.com/lucasjbx/midi_controller.git#subdirectory=linux_app"
+curl -fsSL https://raw.githubusercontent.com/lucasjbx/midi_controller/main/install.sh | bash
 ```
 
 Then run `midivol` or search for "MIDIVol" in your app menu.
 
-See [linux_app/README.md](linux_app/README.md) for full documentation.
+See [linux_app/README.md](linux_app/README.md) for full documentation and alternative install methods.
 
 ## Windows
 

@@ -29,16 +29,13 @@ PyQt6 must be installed system-wide (too large for pip in a venv).
 
 ## Installation
 
-### Quick install
+### One-liner (recommended)
 
 ```bash
-git clone https://github.com/lucasjbx/midi_controller.git
-cd midi_controller/linux_app
-chmod +x install.sh
-./install.sh
+curl -fsSL https://raw.githubusercontent.com/lucasjbx/midi_controller/main/install.sh | bash
 ```
 
-This creates a virtual environment, installs MIDIVol, and adds a desktop entry.
+Installs all dependencies, MIDIVol, icon, and autostart.
 
 ### pip install (from cloned repo)
 
@@ -49,23 +46,14 @@ source .venv/bin/activate
 pip install .
 ```
 
-### pipx install (directly from GitHub)
-
-**Recommended for users** — no venv management, automatic PATH setup:
+### Alternative: pipx (manual)
 
 ```bash
 sudo apt install libasound2-dev python3-pyqt6 pipx
 pipx install --system-site-packages "midivol @ git+https://github.com/lucasjbx/midi_controller.git#subdirectory=linux_app"
 ```
 
-### Manual venv (alternative)
-
-```bash
-cd linux_app
-python3 -m venv --system-site-packages .venv
-source .venv/bin/activate
-pip install .
-```
+After install, run `midivol`.
 
 ## Usage
 
