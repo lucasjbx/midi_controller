@@ -28,6 +28,7 @@ class MainWindow(QMainWindow):
         self._master_timer.setInterval(500)
         self._master_timer.timeout.connect(self._poll_master_volume)
         self._build_ui()
+        self._migrate_autostart_file()
         self._load_config()
 
     def _build_ui(self):
@@ -238,10 +239,12 @@ class MainWindow(QMainWindow):
         self._port_combo.blockSignals(True)
 
         saved_port = data.get("midi_port", "")
+        port_found = False
         if saved_port:
             idx = self._port_combo.findText(saved_port)
             if idx >= 0:
                 self._port_combo.setCurrentIndex(idx)
+                port_found = True
 
         mappings = data.get("mappings", {})
         for cc_str, apps in mappings.items():
@@ -259,11 +262,24 @@ class MainWindow(QMainWindow):
 
         self._port_combo.blockSignals(False)
 
-        # Now connect to the saved port
-        if saved_port:
+        # Only connect to the saved port if it was found in the combo box
+        # If device is not connected yet, leave it disconnected to avoid
+        # _save_config writing an empty port string
+        if port_found:
             self._on_port_selected(saved_port)
 
     # --- Autostart ---
+
+    def _migrate_autostart_file(self):
+        """Auto-migrate old .desktop files missing DESKTOP_AUTOSTART_ID env var."""
+        path = self._autostart_path()
+        if not os.path.exists(path):
+            return
+        with open(path, "r") as f:
+            content = f.read()
+        if "DESKTOP_AUTOSTART_ID" not in content:
+            # Rewrite with correct Exec line
+            self._on_autostart_toggled(True)
 
     @staticmethod
     def _autostart_path():
