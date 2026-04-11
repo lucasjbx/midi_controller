@@ -1,4 +1,5 @@
 import sys
+import os
 
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui import QIcon
@@ -26,7 +27,12 @@ def main():
     window = MainWindow(audio_controller, config_manager)
     tray = TrayIcon(window)
     tray.show()
-    window.show()
+
+    # Start minimized to tray if launched from autostart (GNOME/KDE convention)
+    if os.environ.get("DESKTOP_AUTOSTART_ID"):
+        window.hide()
+    else:
+        window.show()
 
     exit_code = app.exec()
     sys.exit(exit_code)
