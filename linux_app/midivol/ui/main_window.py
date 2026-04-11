@@ -275,7 +275,7 @@ class MainWindow(QMainWindow):
                     "[Desktop Entry]\n"
                     "Name=MIDIVol\n"
                     "Comment=MIDI volume controller for Linux\n"
-                    f"Exec={midivol_bin}\n"
+                    f"Exec=env DESKTOP_AUTOSTART_ID=midivol {midivol_bin}\n"
                     "Icon=midivol\n"
                     "Type=Application\n"
                     "X-GNOME-Autostart-enabled=true\n"
