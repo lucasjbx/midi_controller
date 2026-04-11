@@ -259,6 +259,10 @@ class MainWindow(QMainWindow):
 
         self._port_combo.blockSignals(False)
 
+        # Now connect to the saved port
+        if saved_port:
+            self._on_port_selected(saved_port)
+
     # --- Autostart ---
 
     @staticmethod
