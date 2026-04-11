@@ -119,7 +119,7 @@ cd midi_controller/linux_app
 ./install.sh
 ```
 
-**Or with pipx (one-liner):**
+**Or with pipx (requires system dependencies first):**
 ```bash
 sudo apt install libasound2-dev python3-pyqt6 pipx
 pipx install "midivol @ git+https://github.com/lucasjbx/midi_controller.git#subdirectory=linux_app"

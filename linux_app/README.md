@@ -53,11 +53,15 @@ pip install .
 
 **Recommended for users** — no venv management, automatic PATH setup:
 
+**First, install system dependencies:**
+```bash
+sudo apt install libasound2-dev python3-pyqt6 pipx
+```
+
+**Then install MIDIVol:**
 ```bash
 pipx install "midivol @ git+https://github.com/lucasjbx/midi_controller.git#subdirectory=linux_app"
 ```
-
-If you don't have `pipx`: `sudo apt install pipx`
 
 ### Manual venv (alternative)
 
