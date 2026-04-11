@@ -90,8 +90,7 @@ The firmware runs CircuitPython 9.2.7 on the Raspberry Pi Pico W.
 
 1. Flash CircuitPython 9.2.7 on the Pico W ([download](https://circuitpython.org/board/raspberry_pi_pico_w/))
 2. Copy all files from `firmware/` to the CIRCUITPY drive
-3. Copy `settings.toml.example` to `settings.toml` and fill in your credentials
-4. Install required Adafruit libraries to `lib/` on the CIRCUITPY drive:
+3. Install required Adafruit libraries to `lib/` on the CIRCUITPY drive:
    - `adafruit_ads1x15`
    - `adafruit_midi`
    - `adafruit_hid`
