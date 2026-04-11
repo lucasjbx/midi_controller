@@ -232,23 +232,32 @@ class MainWindow(QMainWindow):
 
     def _load_config(self):
         data = self._config.load()
+
+        # Block signals to prevent _on_port_selected from triggering _save_config
+        # before mappings are loaded
+        self._port_combo.blockSignals(True)
+
         saved_port = data.get("midi_port", "")
         if saved_port:
             idx = self._port_combo.findText(saved_port)
             if idx >= 0:
                 self._port_combo.setCurrentIndex(idx)
+
         mappings = data.get("mappings", {})
         for cc_str, apps in mappings.items():
             cc = int(cc_str)
             col = self._pot_columns.get(cc)
             if col:
                 col.set_apps(apps)
+
         mute_notes = data.get("mute_notes", {})
         for cc_str, note in mute_notes.items():
             cc = int(cc_str)
             col = self._pot_columns.get(cc)
             if col:
                 col.set_mute_note(note)
+
+        self._port_combo.blockSignals(False)
 
     # --- Autostart ---
 

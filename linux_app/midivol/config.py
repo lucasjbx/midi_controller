@@ -26,7 +26,9 @@ class ConfigManager:
         os.makedirs(self._dir, exist_ok=True)
         # If we're trying to save empty mappings but a config already exists,
         # keep the existing mappings to prevent accidental data loss on updates
-        if not mappings and os.path.exists(self._path):
+        # Check if mappings are truly empty (all values are empty lists)
+        has_real_mappings = any(mappings.get(str(cc)) for cc in [58, 59, 60])
+        if not has_real_mappings and os.path.exists(self._path):
             existing = self.load()
             if existing.get("mappings"):
                 mappings = existing["mappings"]
