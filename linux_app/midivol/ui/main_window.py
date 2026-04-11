@@ -3,10 +3,11 @@ from PyQt6.QtWidgets import (
     QComboBox, QPushButton, QLabel,
 )
 from PyQt6.QtCore import Qt, QTimer
-from constants import POT_CC_NUMBERS, POT_LABELS, POT_LED_CC, MUTE_ALL_CC, MIDI_MAX
-from midi_worker import MidiWorker
-from ui.pot_column import PotColumn
-from ui.app_selector import AppSelectorDialog
+
+from ..constants import POT_CC_NUMBERS, POT_LABELS, POT_LED_CC, MUTE_ALL_CC, MIDI_MAX
+from ..midi_worker import MidiWorker
+from .pot_column import PotColumn
+from .app_selector import AppSelectorDialog
 
 
 class MainWindow(QMainWindow):
@@ -132,7 +133,7 @@ class MainWindow(QMainWindow):
             return
         self._last_volume[cc_number] = value
         if col.is_muted():
-            # Pot moved while muted → unmute
+            # Pot moved while muted -> unmute
             self._toggle_mute(cc_number, False)
             return
         col.update_volume(value)
@@ -187,7 +188,7 @@ class MainWindow(QMainWindow):
             self._learn_target = None
             self._save_config()
         else:
-            # Find pot with matching mute_note → toggle
+            # Find pot with matching mute_note -> toggle
             for cc, col in self._pot_columns.items():
                 if col.get_mute_note() == note:
                     self._toggle_mute(cc, not col.is_muted())

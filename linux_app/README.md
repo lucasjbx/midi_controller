@@ -20,20 +20,37 @@ Linux desktop application for controlling per-application audio volume using a U
 sudo apt install libasound2-dev python3-pyqt6
 ```
 
-### Python packages
+### Python packages (installed automatically)
 
 - `python-rtmidi` (MIDI I/O)
 - `pulsectl` (PipeWire/PulseAudio volume control)
-- `PyQt6` (GUI, installed system-wide)
+
+PyQt6 must be installed system-wide (too large for pip in a venv).
 
 ## Installation
 
-### Quick install
+### Quick install (recommended)
+
+```bash
+git clone https://github.com/lucasjbx/midi_controller.git
+cd midi_controller/linux_app
+chmod +x install.sh
+./install.sh
+```
+
+This creates a virtual environment, installs MIDIVol, and adds a desktop entry.
+
+### pip install (from cloned repo)
 
 ```bash
 cd linux_app
-chmod +x install.sh
-./install.sh
+pip install .
+```
+
+### pip install (directly from GitHub)
+
+```bash
+pip install "midivol @ git+https://github.com/lucasjbx/midi_controller.git#subdirectory=linux_app"
 ```
 
 ### Manual install
@@ -42,7 +59,7 @@ chmod +x install.sh
 cd linux_app
 python3 -m venv --system-site-packages .venv
 source .venv/bin/activate
-pip install python-rtmidi pulsectl
+pip install .
 ```
 
 ## Usage
@@ -50,12 +67,10 @@ pip install python-rtmidi pulsectl
 ### Running
 
 ```bash
-cd linux_app
-source .venv/bin/activate
-python main.py
+midivol
 ```
 
-Or use the desktop entry after running `install.sh`.
+Or use the desktop entry after running `install.sh` (search for "MIDIVol" in your app menu).
 
 ### How to use
 

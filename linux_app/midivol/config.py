@@ -1,6 +1,7 @@
 import json
 import os
-from constants import DEFAULT_CONFIG_DIR, DEFAULT_CONFIG_PATH
+
+from .constants import DEFAULT_CONFIG_DIR, DEFAULT_CONFIG_PATH
 
 
 class ConfigManager:

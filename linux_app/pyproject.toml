@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "midivol"
+version = "1.0.0"
+description = "MIDI volume controller for Linux - per-app volume control via USB MIDI"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = [
+    "python-rtmidi",
+    "pulsectl",
+]
+
+[project.urls]
+Repository = "https://github.com/lucasjbx/midi_controller"
+
+[project.scripts]
+midivol = "midivol.main:main"
+
+[tool.setuptools.packages.find]
+include = ["midivol*"]
+
+[tool.setuptools.package-data]
+midivol = ["resources/*.svg"]

@@ -2,7 +2,8 @@ import time
 import threading
 import rtmidi
 from PyQt6.QtCore import QThread, pyqtSignal
-from constants import POT_CC_NUMBERS, MIDI_CHANNEL
+
+from .constants import POT_CC_NUMBERS, MIDI_CHANNEL
 
 
 class MidiWorker(QThread):

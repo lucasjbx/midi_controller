@@ -1,13 +1,19 @@
 from PyQt6.QtWidgets import QSystemTrayIcon, QMenu
 from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtWidgets import QApplication
+from importlib.resources import files
+
+
+def _get_icon():
+    icon_path = str(files("midivol.resources").joinpath("midivol.svg"))
+    return QIcon(icon_path)
 
 
 class TrayIcon(QSystemTrayIcon):
     def __init__(self, parent_window):
         super().__init__(parent_window)
         self._window = parent_window
-        self.setIcon(QIcon.fromTheme("audio-volume-medium"))
+        self.setIcon(_get_icon())
         self.setToolTip("MIDIVol")
         self._build_menu()
         self.activated.connect(self._on_activated)
