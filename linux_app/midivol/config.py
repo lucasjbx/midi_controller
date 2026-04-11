@@ -24,6 +24,12 @@ class ConfigManager:
 
     def save(self, midi_port, mappings, mute_notes=None):
         os.makedirs(self._dir, exist_ok=True)
+        # If we're trying to save empty mappings but a config already exists,
+        # keep the existing mappings to prevent accidental data loss on updates
+        if not mappings and os.path.exists(self._path):
+            existing = self.load()
+            if existing.get("mappings"):
+                mappings = existing["mappings"]
         data = {
             "midi_port": midi_port,
             "mappings": mappings,
