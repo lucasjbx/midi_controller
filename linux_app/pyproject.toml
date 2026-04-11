@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "midivol"
-version = "1.0.4"
+version = "1.0.5"
 description = "MIDI volume controller for Linux - per-app volume control via USB MIDI"
 readme = "README.md"
 license = "MIT"
