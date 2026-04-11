@@ -44,7 +44,7 @@ cat > "$AUTOSTART_DIR/midivol.desktop" << EOF
 [Desktop Entry]
 Name=MIDIVol
 Comment=MIDI volume controller for Linux
-Exec=env DESKTOP_AUTOSTART_ID=midivol $MIDIVOL_BIN
+Exec=$MIDIVOL_BIN --autostart
 Icon=midivol
 Type=Application
 X-GNOME-Autostart-enabled=true

@@ -271,14 +271,14 @@ class MainWindow(QMainWindow):
     # --- Autostart ---
 
     def _migrate_autostart_file(self):
-        """Auto-migrate old .desktop files missing DESKTOP_AUTOSTART_ID env var."""
+        """Auto-migrate old .desktop files to use --autostart CLI arg."""
         path = self._autostart_path()
         if not os.path.exists(path):
             return
         with open(path, "r") as f:
             content = f.read()
-        if "DESKTOP_AUTOSTART_ID" not in content:
-            # Rewrite with correct Exec line
+        if "--autostart" not in content:
+            # Rewrite with correct Exec line using --autostart arg
             self._on_autostart_toggled(True)
 
     @staticmethod
@@ -295,7 +295,7 @@ class MainWindow(QMainWindow):
                     "[Desktop Entry]\n"
                     "Name=MIDIVol\n"
                     "Comment=MIDI volume controller for Linux\n"
-                    f"Exec=env DESKTOP_AUTOSTART_ID=midivol {midivol_bin}\n"
+                    f"Exec={midivol_bin} --autostart\n"
                     "Icon=midivol\n"
                     "Type=Application\n"
                     "X-GNOME-Autostart-enabled=true\n"

@@ -1,5 +1,4 @@
 import sys
-import os
 
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui import QIcon
@@ -28,8 +27,9 @@ def main():
     tray = TrayIcon(window)
     tray.show()
 
-    # Start minimized to tray if launched from autostart (GNOME/KDE convention)
-    if os.environ.get("DESKTOP_AUTOSTART_ID"):
+    # Start minimized to tray if launched from autostart
+    # Use --autostart CLI flag instead of env var (more reliable on KDE/systemd)
+    if "--autostart" in sys.argv:
         window.hide()
     else:
         window.show()
