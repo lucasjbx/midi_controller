@@ -1,6 +1,9 @@
+import os
+import shutil
+
 from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QHBoxLayout, QVBoxLayout,
-    QComboBox, QPushButton, QLabel,
+    QComboBox, QPushButton, QLabel, QCheckBox,
 )
 from PyQt6.QtCore import Qt, QTimer
 
@@ -50,6 +53,12 @@ class MainWindow(QMainWindow):
         self._status_label.setStyleSheet("color: red; font-weight: bold;")
         top.addWidget(self._status_label)
         top.addStretch()
+
+        self._autostart_cb = QCheckBox("Start on login")
+        self._autostart_cb.setChecked(os.path.exists(self._autostart_path()))
+        self._autostart_cb.toggled.connect(self._on_autostart_toggled)
+        top.addWidget(self._autostart_cb)
+
         main_layout.addLayout(top)
 
         # 3 pot columns
@@ -240,6 +249,31 @@ class MainWindow(QMainWindow):
             col = self._pot_columns.get(cc)
             if col:
                 col.set_mute_note(note)
+
+    # --- Autostart ---
+
+    @staticmethod
+    def _autostart_path():
+        return os.path.expanduser("~/.config/autostart/midivol.desktop")
+
+    def _on_autostart_toggled(self, checked):
+        path = self._autostart_path()
+        if checked:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            midivol_bin = shutil.which("midivol") or "midivol"
+            with open(path, "w") as f:
+                f.write(
+                    "[Desktop Entry]\n"
+                    "Name=MIDIVol\n"
+                    "Comment=MIDI volume controller for Linux\n"
+                    f"Exec={midivol_bin}\n"
+                    "Icon=midivol\n"
+                    "Type=Application\n"
+                    "X-GNOME-Autostart-enabled=true\n"
+                )
+        else:
+            if os.path.exists(path):
+                os.remove(path)
 
     def closeEvent(self, event):
         event.ignore()

@@ -29,7 +29,7 @@ PyQt6 must be installed system-wide (too large for pip in a venv).
 
 ## Installation
 
-### Quick install (recommended)
+### Quick install
 
 ```bash
 git clone https://github.com/lucasjbx/midi_controller.git
