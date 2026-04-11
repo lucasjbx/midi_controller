@@ -44,16 +44,22 @@ This creates a virtual environment, installs MIDIVol, and adds a desktop entry.
 
 ```bash
 cd linux_app
+python3 -m venv --system-site-packages .venv
+source .venv/bin/activate
 pip install .
 ```
 
-### pip install (directly from GitHub)
+### pipx install (directly from GitHub)
+
+**Recommended for users** — no venv management, automatic PATH setup:
 
 ```bash
-pip install "midivol @ git+https://github.com/lucasjbx/midi_controller.git#subdirectory=linux_app"
+pipx install "midivol @ git+https://github.com/lucasjbx/midi_controller.git#subdirectory=linux_app"
 ```
 
-### Manual install
+If you don't have `pipx`: `sudo apt install pipx`
+
+### Manual venv (alternative)
 
 ```bash
 cd linux_app
