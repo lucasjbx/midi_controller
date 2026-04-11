@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+.venv/
+
+# CircuitPython compiled libraries
+*.mpy
+
+# User config (contains personal mappings)
+config.json
+
+# Credentials
+settings.toml
+
+# IDE
+.vscode/
+
+# CircuitPython SD card
+sd/
+
+# macOS
+.DS_Store
+.fseventsd/
+.Trashes
+.metadata_never_index
+
+# CircuitPython boot output
+boot_out.txt
+
+# Old CIRCUITPY mount (firmware source is in firmware/)
+CIRCUITPY/
+
+# Claude memory (development notes)
+claude_memory/
+caveman.md
