@@ -71,10 +71,21 @@ class MidiWorker(QThread):
             try:
                 self._midi_out = rtmidi.MidiOut()
                 ports = self._midi_out.get_ports()
+                if not self._port_name:
+                    self._midi_out = None
+                    return
+                # Try exact match first
                 for i, name in enumerate(ports):
-                    if self._port_name and self._port_name.split(":")[0] in name:
+                    if self._port_name == name:
                         self._midi_out.open_port(i)
                         return
+                # If exact match fails, try prefix match (ALSA jack number may change)
+                port_prefix = self._get_port_prefix(self._port_name)
+                if port_prefix:
+                    for i, name in enumerate(ports):
+                        if self._get_port_prefix(name) == port_prefix:
+                            self._midi_out.open_port(i)
+                            return
                 # No matching port found
                 self._midi_out = None
             except Exception:
@@ -90,10 +101,28 @@ class MidiWorker(QThread):
         if not self._port_name:
             return None
         ports = midi_in.get_ports()
+        # Try exact match first
         for i, name in enumerate(ports):
             if self._port_name == name:
                 return i
+        # If exact match fails, try prefix match (ALSA jack number may change)
+        # Extract prefix by removing the ALSA jack number at the end (e.g., " 28:0")
+        port_prefix = self._get_port_prefix(self._port_name)
+        if port_prefix:
+            for i, name in enumerate(ports):
+                if self._get_port_prefix(name) == port_prefix:
+                    return i
         return None
+
+    def _get_port_prefix(self, port_name):
+        """Extract port name prefix without ALSA jack number (e.g., '28:0')."""
+        if not port_name:
+            return None
+        # ALSA jack format is " XX:Y" at the end, e.g., " 28:0"
+        parts = port_name.rsplit(" ", 1)
+        if len(parts) == 2 and ":" in parts[1]:
+            return parts[0]
+        return port_name
 
     def _parse(self, data):
         if len(data) < 3:

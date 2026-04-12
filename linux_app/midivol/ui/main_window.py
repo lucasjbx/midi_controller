@@ -87,9 +87,35 @@ class MainWindow(QMainWindow):
         ports = MidiWorker.list_ports()
         self._port_combo.addItems(ports)
         idx = self._port_combo.findText(current)
+        if idx < 0:
+            # Try prefix match if exact match fails
+            idx = self._find_port_by_prefix(current)
         if idx >= 0:
             self._port_combo.setCurrentIndex(idx)
         self._port_combo.blockSignals(False)
+
+    def _find_port_by_prefix(self, port_name):
+        """Find combo index for port by prefix (ignoring ALSA jack number)."""
+        if not port_name:
+            return -1
+        prefix = self._get_port_prefix(port_name)
+        if not prefix:
+            return -1
+        for i in range(self._port_combo.count()):
+            combo_text = self._port_combo.itemText(i)
+            if self._get_port_prefix(combo_text) == prefix:
+                return i
+        return -1
+
+    def _get_port_prefix(self, port_name):
+        """Extract port name prefix without ALSA jack number (e.g., '28:0')."""
+        if not port_name:
+            return None
+        # ALSA jack format is " XX:Y" at the end, e.g., " 28:0"
+        parts = port_name.rsplit(" ", 1)
+        if len(parts) == 2 and ":" in parts[1]:
+            return parts[0]
+        return port_name
 
     def _on_port_selected(self, port_name, save_config=True):
         self._stop_midi()
@@ -242,7 +268,11 @@ class MainWindow(QMainWindow):
         saved_port = data.get("midi_port", "")
         port_found = False
         if saved_port:
+            # Try exact match first
             idx = self._port_combo.findText(saved_port)
+            if idx < 0:
+                # Try prefix match (ALSA jack number may change)
+                idx = self._find_port_by_prefix(saved_port)
             if idx >= 0:
                 self._port_combo.setCurrentIndex(idx)
                 port_found = True
