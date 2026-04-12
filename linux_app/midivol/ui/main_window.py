@@ -91,7 +91,7 @@ class MainWindow(QMainWindow):
             self._port_combo.setCurrentIndex(idx)
         self._port_combo.blockSignals(False)
 
-    def _on_port_selected(self, port_name):
+    def _on_port_selected(self, port_name, save_config=True):
         self._stop_midi()
         if not port_name:
             self._set_status(False)
@@ -102,7 +102,8 @@ class MainWindow(QMainWindow):
         self._midi_worker.connection_ok.connect(lambda: self._set_status(True))
         self._midi_worker.connection_lost.connect(lambda: self._set_status(False))
         self._midi_worker.start()
-        self._save_config()
+        if save_config:
+            self._save_config()
 
     def _stop_midi(self):
         if self._midi_worker:
@@ -262,11 +263,15 @@ class MainWindow(QMainWindow):
 
         self._port_combo.blockSignals(False)
 
-        # Only connect to the saved port if it was found in the combo box
-        # If device is not connected yet, leave it disconnected to avoid
-        # _save_config writing an empty port string
+        # Try to connect to the saved port
         if port_found:
-            self._on_port_selected(saved_port)
+            # Port is in combo, connect with config save
+            self._on_port_selected(saved_port, save_config=True)
+        elif saved_port:
+            # Port not yet available (device not ready at boot), but try to connect anyway
+            # Don't save config to avoid overwriting with empty port string
+            # MidiWorker will retry connection attempts until device is ready
+            self._on_port_selected(saved_port, save_config=False)
 
     # --- Autostart ---
 
