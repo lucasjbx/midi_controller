@@ -125,7 +125,7 @@ async def pot(pin, name, control, color, led_n):
             print(f"{name} - {val}\r {control, val}\r {pot_val}")
             usb_midi.send(ControlChange(control, val))
             pot_prev_state = val
-        await asyncio.sleep(0.005)
+        await asyncio.sleep(0.001)
 
 
 # boot led animation
@@ -222,7 +222,7 @@ async def buttons():
                     display_line_2("")
                     text_val = "F15"
 
-        await asyncio.sleep(0.005)
+        await asyncio.sleep(0.001)
 
 
 # monitor encoders
