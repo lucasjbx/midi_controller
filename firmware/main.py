@@ -110,19 +110,9 @@ display.root_group = text_group
 async def pot(pin, name, control, color, led_n):
     analog = AnalogIn(ads, pin)
     pot_prev_state = -1
-    # Simple moving average: keep last 4 readings
-    readings = [0, 0, 0, 0]
-    read_idx = 0
     while True:
-        # Collect sample in circular buffer
-        readings[read_idx] = analog.value
-        read_idx = (read_idx + 1) % 4
-
-        # Average the 4 readings for smooth response
-        pot_val = sum(readings) // 4
+        pot_val = analog.value
         val = int(map_range(pot_val, 0, 26250, 0, 127))
-
-        # Only send if change is significant (deadzone = 1)
         if abs(val - pot_prev_state) > 1:
             val_0_100 = map_range(val, 0, 127, 0, 100)
             if name == "Pot0":
