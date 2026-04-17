@@ -113,15 +113,19 @@ async def pot(pin, name, control, color, led_n):
     while True:
         pot_val = analog.value
         val = int(map_range(pot_val, 0, 26250, 0, 127))
+        val_0_100 = map_range(val, 0, 127, 0, 100)
+
+        # Update display every read (instant feedback)
+        if name == "Pot0":
+            display_line_1("   | - -")
+        elif name == "Pot1":
+            display_line_1("   - | -")
+        elif name == "Pot2":
+            display_line_1("   - - |")
+        display_line_2(str(round(val_0_100)))
+
+        # Send MIDI only if change is significant (deadzone = 1)
         if abs(val - pot_prev_state) > 1:
-            val_0_100 = map_range(val, 0, 127, 0, 100)
-            if name == "Pot0":
-                display_line_1("   | - -")
-            elif name == "Pot1":
-                display_line_1("   - | -")
-            elif name == "Pot2":
-                display_line_1("   - - |")
-            display_line_2(str(round(val_0_100)))
             print(f"{name} - {val}\r {control, val}\r {pot_val}")
             usb_midi.send(ControlChange(control, val))
             pot_prev_state = val
