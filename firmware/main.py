@@ -4,6 +4,7 @@ import time
 import busio
 import asyncio
 import digitalio
+from collections import deque
 from adafruit_simplemath import map_range
 
 # ads
@@ -110,21 +111,30 @@ display.root_group = text_group
 async def pot(pin, name, control, color, led_n):
     analog = AnalogIn(ads, pin)
     pot_prev_state = -1
+    readings = deque(maxlen=8)  # Moving average filter: 8 samples
     while True:
-        pot_val = analog.value
-        val = int(map_range(pot_val, 0, 26250, 0, 127))
-        if abs(val - pot_prev_state) > 1:
-            val_0_100 = map_range(val, 0, 127, 0, 100)
-            if name == "Pot0":
-                display_line_1("   | - -")
-            elif name == "Pot1":
-                display_line_1("   - | -")
-            elif name == "Pot2":
-                display_line_1("   - - |")
-            display_line_2(str(round(val_0_100)))
-            print(f"{name} - {val}\r {control, val}\r {pot_val}")
-            usb_midi.send(ControlChange(control, val))
-            pot_prev_state = val
+        # Collect sample
+        readings.append(analog.value)
+
+        # Only process if buffer is full
+        if len(readings) == 8:
+            # Average the readings for smooth response
+            pot_val = sum(readings) // len(readings)
+            val = int(map_range(pot_val, 0, 26250, 0, 127))
+
+            # Only send if change is significant (deadzone = 1)
+            if abs(val - pot_prev_state) > 1:
+                val_0_100 = map_range(val, 0, 127, 0, 100)
+                if name == "Pot0":
+                    display_line_1("   | - -")
+                elif name == "Pot1":
+                    display_line_1("   - | -")
+                elif name == "Pot2":
+                    display_line_1("   - - |")
+                display_line_2(str(round(val_0_100)))
+                print(f"{name} - {val}\r {control, val}\r {pot_val}")
+                usb_midi.send(ControlChange(control, val))
+                pot_prev_state = val
         await asyncio.sleep(0.005)
 
 
