@@ -110,19 +110,22 @@ display.root_group = text_group
 async def pot(pin, name, control, color, led_n):
     analog = AnalogIn(ads, pin)
     pot_prev_state = -1
+    display_prev_state = -1
     while True:
         pot_val = analog.value
         val = int(map_range(pot_val, 0, 26250, 0, 127))
         val_0_100 = map_range(val, 0, 127, 0, 100)
 
-        # Update display every read (instant feedback)
-        if name == "Pot0":
-            display_line_1("   | - -")
-        elif name == "Pot1":
-            display_line_1("   - | -")
-        elif name == "Pot2":
-            display_line_1("   - - |")
-        display_line_2(str(round(val_0_100)))
+        # Update display if change is significant (deadzone = 2)
+        if abs(val - display_prev_state) > 2:
+            if name == "Pot0":
+                display_line_1("   | - -")
+            elif name == "Pot1":
+                display_line_1("   - | -")
+            elif name == "Pot2":
+                display_line_1("   - - |")
+            display_line_2(str(round(val_0_100)))
+            display_prev_state = val
 
         # Send MIDI only if change is significant (deadzone = 1)
         if abs(val - pot_prev_state) > 1:
