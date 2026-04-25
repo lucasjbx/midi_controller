@@ -110,14 +110,11 @@ display.root_group = text_group
 async def pot(pin, name, control, color, led_n):
     analog = AnalogIn(ads, pin)
     pot_prev_state = -1
-    display_prev_state = -1
     while True:
         pot_val = analog.value
         val = int(map_range(pot_val, 0, 26250, 0, 127))
-        val_0_100 = map_range(val, 0, 127, 0, 100)
-
-        # Update display if change is significant (deadzone = 2)
-        if abs(val - display_prev_state) > 2:
+        if abs(val - pot_prev_state) > 2:
+            val_0_100 = map_range(val, 0, 127, 0, 100)
             if name == "Pot0":
                 display_line_1("   | - -")
             elif name == "Pot1":
@@ -125,14 +122,10 @@ async def pot(pin, name, control, color, led_n):
             elif name == "Pot2":
                 display_line_1("   - - |")
             display_line_2(str(round(val_0_100)))
-            display_prev_state = val
-
-        # Send MIDI only if change is significant (deadzone = 1)
-        if abs(val - pot_prev_state) > 1:
             print(f"{name} - {val}\r {control, val}\r {pot_val}")
             usb_midi.send(ControlChange(control, val))
             pot_prev_state = val
-        await asyncio.sleep(0.001)
+        await asyncio.sleep(0.005)
 
 
 # boot led animation
@@ -229,7 +222,7 @@ async def buttons():
                     display_line_2("")
                     text_val = "F15"
 
-        await asyncio.sleep(0.001)
+        await asyncio.sleep(0.005)
 
 
 # monitor encoders
