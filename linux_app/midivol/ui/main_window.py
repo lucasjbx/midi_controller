@@ -11,6 +11,7 @@ from ..constants import POT_CC_NUMBERS, POT_LABELS, POT_LED_CC, MUTE_ALL_CC, MID
 from ..midi_worker import MidiWorker
 from .pot_column import PotColumn
 from .app_selector import AppSelectorDialog
+from .update_dialog import UpdateDialog
 
 
 class MainWindow(QMainWindow):
@@ -59,6 +60,10 @@ class MainWindow(QMainWindow):
         self._autostart_cb.setChecked(os.path.exists(self._autostart_path()))
         self._autostart_cb.toggled.connect(self._on_autostart_toggled)
         top.addWidget(self._autostart_cb)
+
+        update_btn = QPushButton("Update")
+        update_btn.clicked.connect(self._open_update_dialog)
+        top.addWidget(update_btn)
 
         main_layout.addLayout(top)
 
@@ -338,6 +343,10 @@ class MainWindow(QMainWindow):
         else:
             if os.path.exists(path):
                 os.remove(path)
+
+    def _open_update_dialog(self):
+        dlg = UpdateDialog(self)
+        dlg.exec()
 
     def closeEvent(self, event):
         event.ignore()
