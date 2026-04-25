@@ -49,13 +49,23 @@ class MidiWorker(QThread):
                 midi_in.open_port(port_index)
                 self._open_output()
                 self.connection_ok.emit()
+                idle_ticks = 0
                 while self._running:
                     msg = midi_in.get_message()
                     if msg:
                         data, _ = msg
                         self._parse(data)
+                        idle_ticks = 0
                     else:
                         time.sleep(0.001)
+                        idle_ticks += 1
+                        if idle_ticks >= 2000:
+                            idle_ticks = 0
+                            checker = rtmidi.MidiIn()
+                            still_there = self._find_port(checker) is not None
+                            del checker
+                            if not still_there:
+                                raise Exception("device disconnected")
             except Exception:
                 self.connection_lost.emit()
             finally:

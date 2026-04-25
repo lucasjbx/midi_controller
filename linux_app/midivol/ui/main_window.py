@@ -7,7 +7,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt, QTimer
 
-from ..constants import POT_CC_NUMBERS, POT_LABELS, POT_LED_CC, MUTE_ALL_CC, MIDI_MAX
+from ..constants import POT_CC_NUMBERS, POT_LABELS, POT_LED_CC, MUTE_ALL_CC, MIDI_MAX, APP_VERSION
 from ..midi_worker import MidiWorker
 from .pot_column import PotColumn
 from .app_selector import AppSelectorDialog
@@ -32,7 +32,7 @@ class MainWindow(QMainWindow):
         self._load_config()
 
     def _build_ui(self):
-        self.setWindowTitle("MIDIVol")
+        self.setWindowTitle(f"MIDIVol v{APP_VERSION}")
         self.setMinimumSize(650, 500)
 
         central = QWidget()

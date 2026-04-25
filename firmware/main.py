@@ -106,6 +106,18 @@ text_group.append(text1)
 display.root_group = text_group
 
 
+def show_splash():
+    text1.text = "MIDIVol"
+    bar = ""
+    for _ in range(7):
+        bar += "="
+        text.text = bar
+        time.sleep(0.15)
+    time.sleep(0.5)
+    text.text = ""
+    text1.text = ""
+
+
 # monitor potentiometers
 async def pot(pin, name, control, color, led_n):
     analog = AnalogIn(ads, pin)
@@ -151,6 +163,7 @@ for c in range(3):
 b_leds.brightness = 0.3
 p_leds.brightness = 0.3
 
+show_splash()
 
 # display control
 def display_line_1(text_):
