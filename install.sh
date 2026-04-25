@@ -40,6 +40,11 @@ AUTOSTART_DIR="$HOME/.config/autostart"
 mkdir -p "$AUTOSTART_DIR"
 cp "$DESKTOP_DIR/midivol.desktop" "$AUTOSTART_DIR/midivol.desktop"
 
+# Refresh icon and desktop caches so Plasma picks up the icon immediately
+update-desktop-database "$DESKTOP_DIR" 2>/dev/null || true
+gtk-update-icon-cache -f -t ~/.local/share/icons/hicolor 2>/dev/null || true
+kbuildsycoca6 --noincremental 2>/dev/null || true
+
 echo ""
 echo "Done! Run with: $INSTALL_DIR/.venv/bin/midivol"
 echo "Or search 'MIDIVol' in the app menu."
