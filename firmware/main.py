@@ -42,7 +42,7 @@ import rotaryio
 # time keeper, so we know when to turn off the LED
 led_timestamps = [0, 0, 0]
 led_timestamps_6 = [0, 0, 0, 0, 0, 0]
-display_timestamp_1 = 0
+display_timestamp = 0
 LIT_TIMEOUT = 2  # after n seconds, turn off ring, led or display
 
 # mute crt
