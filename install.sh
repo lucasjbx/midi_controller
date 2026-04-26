@@ -22,11 +22,13 @@ echo "[2/3] Installing icon and desktop entry..."
 mkdir -p "$ICON_DIR" "$DESKTOP_DIR"
 curl -fsSL "$ICON_URL" -o "$ICON_DIR/midivol.svg"
 
+MIDIVOL_BIN="$HOME/.local/bin/midivol"
+
 cat > "$DESKTOP_DIR/midivol.desktop" << EOF
 [Desktop Entry]
 Name=MIDIVol
 Comment=MIDI volume controller for Linux
-Exec=midivol
+Exec=$MIDIVOL_BIN
 Icon=midivol
 Type=Application
 Categories=AudioVideo;Audio;
@@ -39,7 +41,7 @@ cat > "$HOME/.config/autostart/midivol.desktop" << EOF
 [Desktop Entry]
 Name=MIDIVol
 Comment=MIDI volume controller for Linux
-Exec=midivol --autostart
+Exec=$MIDIVOL_BIN --autostart
 Icon=midivol
 Type=Application
 X-GNOME-Autostart-enabled=true
