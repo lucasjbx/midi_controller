@@ -16,7 +16,7 @@ if ! command -v pipx &>/dev/null; then
 fi
 
 echo "[1/3] Installing MIDIVol via pipx..."
-pipx install --force "$PACKAGE_URL"
+pipx install --force --system-site-packages "$PACKAGE_URL"
 
 echo "[2/3] Installing icon and desktop entry..."
 mkdir -p "$ICON_DIR" "$DESKTOP_DIR"

@@ -46,7 +46,7 @@ class _UpdateWorker(QThread):
             self.output.emit("Error: pipx not found.")
             self.finished.emit(False)
             return
-        cmd = [pipx, "install", "--force", PACKAGE_URL]
+        cmd = [pipx, "install", "--force", "--system-site-packages", PACKAGE_URL]
         try:
             proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
             for line in proc.stdout:
