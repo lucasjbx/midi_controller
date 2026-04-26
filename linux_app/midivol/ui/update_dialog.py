@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import shutil
 import subprocess
 import urllib.request
 
@@ -26,7 +27,7 @@ def _fetch_remote_version():
 
 class _UpdateWorker(QThread):
     output = pyqtSignal(str)
-    finished = pyqtSignal(bool)   # True = updated, False = error
+    finished = pyqtSignal(bool)
     up_to_date = pyqtSignal()
 
     def run(self):
@@ -40,8 +41,12 @@ class _UpdateWorker(QThread):
             return
         self.output.emit(f"New version available: {remote} (current: {APP_VERSION})")
         self.output.emit("Installing update...")
-        pip = os.path.join(os.path.dirname(sys.executable), "pip")
-        cmd = [pip, "install", "--upgrade", PACKAGE_URL]
+        pipx = shutil.which("pipx")
+        if not pipx:
+            self.output.emit("Error: pipx not found.")
+            self.finished.emit(False)
+            return
+        cmd = [pipx, "install", "--force", PACKAGE_URL]
         try:
             proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
             for line in proc.stdout:

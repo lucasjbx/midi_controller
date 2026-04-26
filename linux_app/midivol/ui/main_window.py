@@ -1,4 +1,5 @@
 import os
+import sys
 import shutil
 
 from PyQt6.QtWidgets import (
@@ -329,7 +330,7 @@ class MainWindow(QMainWindow):
         path = self._autostart_path()
         if checked:
             os.makedirs(os.path.dirname(path), exist_ok=True)
-            midivol_bin = shutil.which("midivol") or "midivol"
+            midivol_bin = shutil.which("midivol") or os.path.join(os.path.dirname(sys.executable), "midivol")
             with open(path, "w") as f:
                 f.write(
                     "[Desktop Entry]\n"
