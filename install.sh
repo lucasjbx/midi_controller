@@ -41,10 +41,12 @@ cat > "$HOME/.config/autostart/midivol.desktop" << EOF
 [Desktop Entry]
 Name=MIDIVol
 Comment=MIDI volume controller for Linux
-Exec=$MIDIVOL_BIN --autostart
+Exec=bash -c "sleep 5 && $MIDIVOL_BIN --autostart"
 Icon=midivol
 Type=Application
 X-GNOME-Autostart-enabled=true
+X-KDE-autostart-enabled=true
+X-KDE-autostart-phase=2
 EOF
 
 update-desktop-database "$DESKTOP_DIR" 2>/dev/null || true
