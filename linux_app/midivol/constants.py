@@ -1,5 +1,5 @@
 APP_NAME = "MIDIVol"
-APP_VERSION = "1.0.15"
+APP_VERSION = "1.0.16"
 
 # MIDI CC numbers from Pico W firmware (main.py lines 373-375)
 POT_CC_NUMBERS = [58, 59, 60]

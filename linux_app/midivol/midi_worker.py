@@ -1,3 +1,4 @@
+import os
 import time
 import threading
 import rtmidi
@@ -37,6 +38,9 @@ class MidiWorker(QThread):
     def run(self):
         self._running = True
         while self._running:
+            if not os.path.exists("/dev/snd/seq"):
+                self._wait(2.0)
+                continue
             midi_in = rtmidi.MidiIn()
             port_index = self._find_port(midi_in)
             if port_index is None:
