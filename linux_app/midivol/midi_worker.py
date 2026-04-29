@@ -22,10 +22,13 @@ class MidiWorker(QThread):
 
     @staticmethod
     def list_ports():
-        midi_in = rtmidi.MidiIn()
-        ports = midi_in.get_ports()
-        del midi_in
-        return ports
+        try:
+            midi_in = rtmidi.MidiIn()
+            ports = midi_in.get_ports()
+            del midi_in
+            return ports
+        except Exception:
+            return []
 
     def set_port(self, port_name):
         self._port_name = port_name
@@ -68,7 +71,7 @@ class MidiWorker(QThread):
                     else:
                         time.sleep(0.001)
                         idle_ticks += 1
-                        if idle_ticks >= 2000:
+                        if idle_ticks >= 10000:
                             idle_ticks = 0
                             try:
                                 checker = rtmidi.MidiIn()
