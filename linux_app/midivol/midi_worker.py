@@ -38,7 +38,10 @@ class MidiWorker(QThread):
     def run(self):
         self._running = True
         while self._running:
-            if not os.path.exists("/dev/snd/seq"):
+            try:
+                fd = os.open("/dev/snd/seq", os.O_RDONLY | os.O_NONBLOCK)
+                os.close(fd)
+            except OSError:
                 self._wait(2.0)
                 continue
             midi_in = rtmidi.MidiIn()
