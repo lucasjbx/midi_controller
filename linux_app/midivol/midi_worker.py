@@ -40,21 +40,30 @@ class MidiWorker(QThread):
 
     def run(self):
         self._running = True
+        midi_in = None
         while self._running:
             if not os.path.exists("/proc/asound/seq/clients"):
                 self._wait(2.0)
                 continue
+
+            # Create the scanner once and reuse it — avoids accumulating ALSA clients
+            if midi_in is None:
+                try:
+                    midi_in = rtmidi.MidiIn()
+                except Exception:
+                    self._wait(2.0)
+                    continue
+
             try:
-                midi_in = rtmidi.MidiIn()
+                port_index = self._find_port(midi_in)
             except Exception:
+                midi_in = None
                 self._wait(2.0)
                 continue
 
-            port_index = self._find_port(midi_in)
             if port_index is None:
                 self.connection_lost.emit()
                 self._wait(3.0)
-                del midi_in
                 continue
 
             try:
@@ -74,18 +83,19 @@ class MidiWorker(QThread):
                         if idle_ticks >= 10000:
                             idle_ticks = 0
                             try:
-                                checker = rtmidi.MidiIn()
-                                still_there = self._find_port(checker) is not None
-                                del checker
+                                still_there = self._find_port(midi_in) is not None
                             except Exception:
                                 still_there = False
                             if not still_there:
                                 raise Exception("device disconnected")
             except Exception:
                 self.connection_lost.emit()
+                midi_in = None
             finally:
-                midi_in.close_port()
-                del midi_in
+                try:
+                    midi_in.close_port() if midi_in else None
+                except Exception:
+                    midi_in = None
                 self._close_output()
 
             if self._running:
