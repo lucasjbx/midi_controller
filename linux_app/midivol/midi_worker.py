@@ -38,13 +38,15 @@ class MidiWorker(QThread):
     def run(self):
         self._running = True
         while self._running:
-            try:
-                fd = os.open("/dev/snd/seq", os.O_RDONLY | os.O_NONBLOCK)
-                os.close(fd)
-            except OSError:
+            if not os.path.exists("/proc/asound/seq/clients"):
                 self._wait(2.0)
                 continue
-            midi_in = rtmidi.MidiIn()
+            try:
+                midi_in = rtmidi.MidiIn()
+            except Exception:
+                self._wait(2.0)
+                continue
+
             port_index = self._find_port(midi_in)
             if port_index is None:
                 self.connection_lost.emit()
@@ -68,9 +70,12 @@ class MidiWorker(QThread):
                         idle_ticks += 1
                         if idle_ticks >= 2000:
                             idle_ticks = 0
-                            checker = rtmidi.MidiIn()
-                            still_there = self._find_port(checker) is not None
-                            del checker
+                            try:
+                                checker = rtmidi.MidiIn()
+                                still_there = self._find_port(checker) is not None
+                                del checker
+                            except Exception:
+                                still_there = False
                             if not still_there:
                                 raise Exception("device disconnected")
             except Exception:
